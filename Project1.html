@@ -1,0 +1,192 @@
+<!DOCTYPE HTML>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Model Governance & Machine Learning</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<a href="index.html" class="logo">Model Governance & Machine Learning</a>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="index.html">Home</a></li>
+							<li><a href="generic.html">About Me</a></li>
+							<li class="active"><a href="Project1.html">Article</a></li>
+						</ul>
+						<ul class="icons">
+
+							<li><a href="https://www.linkedin.com/in/dagoberto-farias/" class="icon brands alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
+							<li><a href="https://github.com/tenken127" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+						<section class="post">
+								<!-- Text stuff -->
+
+
+											<h3>INTRODUCTION</h3>
+
+											<p>Machine Learning [ML] methodologies have grown in popularity within the banking industry, along with a whole host of tools available to data scientists for development.
+											Python, Matlab, R, SAS, are all excellent platforms some with a longer track record in banking than others.
+											However, deploying ML in a highly regulated banking environment is not as straightforward as in other industries.  Data scientists don’t have the luxury of building black boxes coded in isolation.
+											Well managed developments will have a governance structure with a steering committee, expert panel, and detailed documentation requirements for transparency.
+											It’s fair to say that model developments in banking are considerably more collaborative and often more art than science.</br>
+											<br>Stakeholders from the project steering committee to the expert panel, influence the course of the development substantially making both recommendations and demands.
+											For example, Probability of Default [PD] models or scorecards, are rarely a purely statistically driven exercise.
+											The expert panel members usually come from senior credit approval positions and will advocate for the use of model input features culled from their own credit evaluation experience.
+											Unfortunately, the available development data doesn’t always support the panel’s recommendations and a compromise is made with less than optimal statistical results (within acceptable bounds of course).
+											In the past, this placed developers in a difficult position when facing independent model reviewers,
+											(known as the second line of defense) that is until most organizations established formal development standards that outlined acceptable thresholds of performance and documentation.</p>
+
+											<h3>MODEL RISK</h3>
+
+											<p>It wouldn’t be surprising if most banks began to adopt model development standards as a result of the Federal Reserve’s <a href="/https://www.federalreserve.gov/supervisionreg/srletters/sr1107.htm"/>SR 11-7 letter published April 4th 2011.</a>
+											In the letter, the Fed provided guidance outlining four categories to help institutions mitigate model risk.
+											Those categories are Model Risk Management, Implementation and Use, Validation, and lastly Governance.  When it came to model risk, the Fed stated the following:</p>
+											<ol><blockquote>Model risk occurs primarily for two reasons:
+												<li>a model may have fundamental errors and produce inaccurate outputs when viewed against its design objective and intended business uses;</li>
+												<li>a model may be used incorrectly or inappropriately or there may be a misunderstanding about its limitations and assumptions.
+												Model risk increases with greater model complexity, higher uncertainty about inputs and assumptions, broader extent of use, and larger potential impact.
+												Banking organizations should manage model risk both from individual models and in the aggregate.
+												</li></blockquote>
+											</ol>
+											<p>Models will always have some margin of error for a multitude of reasons, whether it be the available data, the data wrangling process,
+											or the model fitting. In wholesale credit risk, it is almost always the quality of the underlying data that has the greater potential for producing errors.
+											This is due to the limited amount of data available for many developments.  For example, a PD scorecard model designed to rate small businesses faces the following challenges:</p>
+											<ul>
+												<li>Model input features will likely be derived from tax returns, which are not audit quality.</li>
+												<li>Changes in the composition of the portfolio over time, such as industry concentrations and shifts in risk appetite, can lead to development data that doesn’t reflect the current portfolio.</li>
+												<li>Banks with a history of low-risk appetite may not have enough defaults to build an accurate classification model for the portfolio in question.</li>
+											</ul>
+								 			<p>The problems with data quality are even worse with Loss Given Default [LGD] models which rely on recovery data collected haphazardly despite the best efforts of the units responsible for post-default collections.
+											The adage, “garbage in, garbage out” is particularly apt.  Keep in mind that the popular adoption of ML across various industries is largely due to the advent of low-cost computing power
+											and the availability of plentiful data, the latter of which is simply not true in most banks.  Wholesale credit data tends to be pretty low volume and “lumpy.” <br>
+											</br>The second point in the Fed’s letter on Model Risk has more implications for ML. The traditional PD modelling approach at banks is to employ the logistic regression
+											using maximum likelihood estimation (log-likelihood) with stepwise selection.  It’s a very straight forward exercise with familiar and transparent selection criteria.
+											However, using classification approaches like LASSO, or Elastic-Net requires a better understanding of how the algorithms are optimizing to train the model. <br>
+											</br>The developer has less control over feature selection which is done automatically in LASSO and Elastic-Net.
+											This is distinct from the stepwise selection employed in maximum likelihood where data scientists have greater control over feature selection (relaxing p-Values, or force fitting features). Why does this matter?
+											Because of the data quality concerns already raised as well as the collaborative nature of model developments in this space.</p>
+  										<ul>
+												<li>The developer must have a strong and detailed understanding of how the algos work in each methodology to address the Fed’s concerns, communicate that to stakeholders, and justify their work product to the second line of defense.</li>
+												<li>Packages & libraries such as scikit-learn or tensorflow may provide convenient and compact code for training models but transparency is essential.   That means the selection criteria and hyper-parameters need to be available for examination and very well understood.</li>
+											</ul>
+											<p>Independent internal model reviewers, known as the second line of defense, provide the “review and challenge” function to the development.
+											They are usually well versed in classical statistical modelling methods but often not as much in ML approaches (although that is changing).
+											A bit of hand-holding can be required because of the inconsistency in ML knowledge within these teams.  In addition, interactions with the second line can be very difficult due to internecine
+											political conflicts over who wields greater authority over the model, the model owners (steering committee) or independent model review.
+											Data scientists are beholden to the model owners who are in turn accountable to the regulator but model reviewers have the power to prevent the model from being implemented altogether.</p>
+											<ul>
+												<li>Ultimately, all roads lead to the data scientist so interpersonal skills are among the most valuable assets in their arsenal of technical knowledge </li>
+											</ul>
+
+											<h3>IMPLEMENTATION & USE</h3>
+
+											<p>Some banks make multiple platforms available to the data scientists so that they may exercise their coding preferences.  Unfortunately, this results in inconsistency in the way
+											each development is coded along with another even greater concern.  Before Python became the primary language for ML models, SAS was the most widely used in banking.
+											When it came time to implement models, the code would have to be translated into an independent implementation environment.  In SAS it wasn’t common practice to use Object Oriented Programming [OOP]
+											that would allow for the direct import of a model object into the production environment.  Having coding standards that leverage OOP would remove any potential error from “translating”
+											the model into production.  Ideally all that would be necessary is to call the model object containing the trained model.  SAS has since introduced Proc DS2 which allows for some degree of OOP
+											but that depends on the production environment deployed in each institution.  The primary takeaway is the following:</p>
+											<ul>
+												<li>Utilize a consistent platform or coding language for all model developments as a documented standard.</li>
+												<li>Make the standard retroactive so that all models in production are also coded and documented by the same standard and ensure that the second line of defense
+												is just as well versed in that coding language as the developers.</li>
+											</ul>
+
+											<p>The Fed letter also advises banks to compensate for model uncertainty which is a little more challenging given how vaguely its described.
+											However, it’s an opportunity to address what may be one of the primary pitfalls of highly collaborative bank model developments.
+											Building alternate models alongside the primary development effort is a worthwhile attempt to fulfill the Fed’s guidance.</p>
+											<ul>
+												<li>Here is where ML can truly can be useful because alternate approaches can provide a benchmark model that is unmoored to the features preferred by expert panel members.</li>
+												<li>Any margin evident between the primary and secondary models quantifies the margin of uncertainty in a more objective fashion.</li>
+								   			<li>The value of alternative models or benchmarks can also serve to satisfy the Fed’s guidance vis a vis on-going monitoring as part of model validation.</li>
+												<li>Alternate challenger models can leverage different features from the primary model, features found in greater abundance or with greater reliability.</li>
+											</ul>
+
+											<h3>MODEL VALIDATION</h3>
+
+											<p>Of all the concerns raised in the Fed’s guidance none is more elaborated upon than the section on Validation.  Here the letter outlines the role of the second line of defense,
+											charging independent model reviewers with the task of evaluating post implementation model performance.  How each organization goes about implementing the guidance will depend on
+											the internal culture of the bank.  Some banks require the second line construct an entirely new model from scratch with the same underlying development data and methodology.
+											Others will hand off the entire validation exercise to the very same developers and provide final review of the work product.
+											The three core elements of the validation process (1) Evaluation of Conceptual Soundness, (2) Ongoing Monitoring, and (3) Outcomes Analysis should in theory reveal model deficiencies
+											but two of those three elements are completely dependent upon data. <br>
+											</br>As noted earlier, wholesale credit is almost always low volume data and when coupled with conservative risk practice, can lead to a banking book bereft of
+											defaults within portfolios necessary for validation.  These exercises involve various performance tests defined in standards and are conducted on an annual basis.
+											Wholesale credit models are through-the-cycle, capturing an economic downturn period within the development data, designed to forecast default in a one-year time horizon.
+											It is entirely possible to experience no defaults within the year once the model is in production, so what can be done?  There are a couple of options and some potentially leveraging ML
+											that can help in these circumstances.<br>
+											</br>The first option, is to simply add the additional year of data to the hold out sample used in testing during development and that depends on the method employed for hold-outs.
+											If there was a robust data set with plentiful defaults, splitting the dataset into through-the-cycle training, through-the-cycle testing, and out-of-time testing then the additional year of data can be added to the out-of-time test set.
+											If development data was sparse to begin with, then synthetic data might be a second viable option.</p>
+											<ul>
+												<li>Many other sectors make use of synthetic data, most often for testing and performance evaluation which would bridge the gap of low default portfolios requiring validation.</li>
+												<li>Synthetic data can be valuable during the development as well by introducing noise, or stress scenario analysis.</li>
+											</ul>
+
+											<p>Python’s scikit-learn has many easy to use functions that can assist data scientists with creating synthetic data for classification, clustering, regressions and many more problems.
+											I will delve into a detailed example in a separate project which I will link here when complete.</p>
+
+											<h3>GOVERNANCE & CONTROL</h3>
+
+											<p>Lastly is the guidance on the maintenance of risk management practice, policies and procedures.  The governance piece is an area that most organizations excel in since banks have a much more
+											conservative hierarchical structure than tech companies.  One area of improvement that would aid in collaboration and knowledge transfer would be to have a repository of all ML methodologies in use or consideration.
+											The library would provide centralized documentation outlining the methodology, assumptions, optimization criteria, coding protocols, supporting literature and applicability to the developments.
+											The repository documentation for each methodology would have a high level summary as well as detailed information easily dropped into development documentation fulfilling the ‘Conceptual Soundness’ sections of the guidance.
+											Regular team meetings that include data scientists as well as the second line, ensures developers and independent reviewers collaborate on the content in the repository before model developments are initiated improving communication.</p>
+											<ul>
+												<li>Each ML approach should be prefaced with an executive level summary of the methodology aimed at senior executives, giving more accessible yet valuable information tailored for their consumption.</li>
+												<li>Summaries can assist steering committee members and expert panels understand the basics of the algorithm when convenient for them as well.</li>
+												<li>The repository would also serve as the single source for technical detail of the ML approach for better control of information.</li>
+											</ul>
+
+											<h3>CONCLUSION</h3>
+
+											<p>Machine Learning presents an excellent opportunity for organizations to accomplish a number of regulatory requirements, improve collaboration, and strengthen the culture of innovation in banking.
+											It can and has helped development teams look at solving developments with a new perspective.  However, that comes at a cost that is quite easily paid, transparency.
+											All too frequently, I was privy to developments where data scientists failed to communicate what they were up, failing to engage with colleagues, and making decisions that placed the model in jeopardy.
+											I will provide two specific projects as examples that will demonstrate the degree of transparency needed in wholesale credit risk when employing ML (one Neural Networks example and one Synthetic Data example).
+											Hopefully this gives readers a sense of what they should be thinking about when considering ML within their organization.</p>
+
+								<hr />
+
+
+				</body>
+
+				<!-- Copyright -->
+
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
