@@ -1,0 +1,477 @@
+<!DOCTYPE HTML>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Project: Neural Networks for Wholesale Credit</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<a href="index.html" class="logo">Project: Neural Networks for Wholesale Credit</a>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="index.html">Home</a></li>
+							<li><a href="generic.html">About Me</a></li>
+							<li class="active"><a href="Project2.html">Article</a></li>
+						</ul>
+						<ul class="icons">
+
+							<li><a href="https://www.linkedin.com/in/dagoberto-farias/" class="icon brands alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
+							<li><a href="https://github.com/tenken127" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<section class="post">
+
+								<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+								<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+									<h3>Introduction</h3>
+									<p>Banking environments are somewhat unique, in that they operate in a regulatory environment
+										that necessitates a high level of transparency and collaboration.  The example I will go
+										through here is meant to provide guidance for what many consider to be among the most opaque
+										approaches in Machine Learning, the artificial neural network [ANN].  Of course, the methodology
+										is not as impenetrable as some would have you believe.  The key to applying a neural network or
+										any machine learning approach within a wholesale credit model is to observe robust model risk
+										governance which should address the following:  </p>
+										<ul>
+											<li>Justification for the technique (i.e., available data, suitability for the problem at hand,
+												output, materiality of the model selection).
+											<li>Model Context (i.e., standalone model, downstream dependency, business use).
+											<li>Transparency (i.e., explainable outputs, training, testing, parameters and/or hyper-parameters).
+											<li>Performance (i.e., benchmarking, validation, re-calibration, and contingency).
+											<li>Limitations (i.e., describe the drawbacks, model assumptions, risk of inputs, risk to downstream systems/models)
+										</ul>
+
+									<h3>Model Justification & Context</h3>
+
+									<p>Since a neural network is a classification approach, it has utility when building a Probability of Default [PD]
+										model as part of a ‘scorecard.’ However, it should be noted that classifications can be useful in LGD and EAD models
+										as well but for now the focus is on scorecards.  Most scorecards are an amalgamation of models divided into modules,
+										sometimes stacked or sometimes independent of one another but often linked by a weighting scheme.  The output of the
+										scorecard is as the name suggests, a score that reflects the rank-ordering of a customer in a designated portfolio of
+										similar customers and signals when a customer is likely to go into default.</p>
+
+										<h4>sub-modules</h4>
+
+										<p>The logistic regression is the most widely used method to train a model utilizing financial information as the
+											independent variable inputs and the binary classification of default/non-default as the dependent variable.  The
+											input features are extracted from historical statements from which ratios are constructed that measure performance
+											along categories such as, leverage, liquidity, growth and profitability.  In an effort to produce a parsimonious model,
+											the number of features are usually limited to around 10 (more or less) but the benefit of the logistic regression is
+											that it produces a probability as opposed to a threshold.  As a result, the financial component of a scorecard is
+											almost always the most heavily weighted in a scorecard but other modules may be useful in the prediction of default.<br>
+
+										</br>Separate modules such as ‘subjectives’ (qualitative evaluation) can be useful to capture obligor behaviors that cannot
+											be reflected in the financial statement such as market dominance, management quality, supplier/customer concentration,
+											or economic outlook.  It is notable that some regulatory bodies such as the European Banking Authority, discourage
+											qualitative modules from contributing more than 20% of a scorecard’s output because of their preference for quantitative
+											methods when evaluating customers.   Aside from the financial and subjective scorecard components, macro-economic factors
+											can be especially useful for linking obligor performance to broader economic trends as in stress testing under CCAR.<br>
+
+										</br>Now that we have a high-level understanding of the typical scorecard layout, lets now take a look at some synthetic data.
+											Synthetic data is used because what we’re trying to accomplish here is an illustrative use of neural networks in the context
+											of a scorecard development.  In any model development there should be formal governance steps around the dataset that determine
+											quality, appropriateness, and completeness of the data but these are outside of the scope of this exercise.</p>
+
+
+										<h4>suitability</h4>
+
+										<p>Assume we have two features selected as development data for a sub-module as part of a scorecard development.  It can be some
+											combination of subjective information and/or economic information, both of which are continuous variables with an associated
+											default event flag.  Moreover, the features selected are not included in the financial module but are considered essential by
+											the expert panel and steering committee.  In the graph below red represents the default events and blue non-defaults.  It should
+											be noted that it is highly unlikely to have this many defaults in a high quality wholesale credit portfolio, but I will touch on
+											this in a separate project.</p>
+
+											<center><img src="images/Figure 2021-01-31 SynthData.png" alt="centered image" /></center>
+
+										<p>Code to generate data:</p>
+										<pre><code>
+import matplotlib.pyplot as plt
+from sklearn.datasets
+import make_circles
+import pandas as pd
+
+plt.figure(figsize=(27,9))
+plt.subplots_adjust(bottom=0.05,top=0.9,left=0.05,right=0.95)
+
+X, y = make_circles(n_samples=1000,noise=0.25, factor=0.005,random_state=1)
+df = pd.DataFrame(dict(x=X[:,0], y=X[:,1],label=y))
+colors = {0:'red',1:'blue'}
+fig, ax = plt.subplots()
+grouped = df.groupby('label')
+for key, group in grouped:
+	group.plot(ax=ax, kind='scatter', x='x',y='y',
+	label=key, color=colors[key])
+
+plt.show()
+
+</code></pre>
+
+												<h4>Linear Separability & The Perceptron Model</h4>
+
+												<p>Let’s start with a basic understanding of the problem and how to solve it.  Linear separability is the means by which classes
+													(two classes in our example) can be separated with a decision boundary generally represented by the linear equation below.</p>
+
+													\[b +\sum_{i=0}^n x_i w_i = 0\]
+
+													<p>The decision boundary is an n-1 hyperplane in an n-dimensional space, that partitions the space into two decision regions.
+														Below is a general schematic for a single perceptron model and the logical computation afforded by the approach.
+														The activation function acts as a logic gate, who’s output is a basic step function.</p>
+
+														\begin{cases}
+														+1  &\text{if $y \geq 0$} \\
+														-1  &\text{if $y < 0$}
+														\end{cases}
+
+											  <p>When inputs are combined with their associated weights the output will be either 1 or -1.
+													This example illustrates how a single node perceptron solves for classification.</p>
+
+													<center><img src="images/NN_1_Node.jpg" alt="" /></center>
+
+													<p>The single perceptron model easily handles the classification at hand but it has its limitations,
+														particularly in what is known as an XOR logic problem such as the following.</p>
+
+													<center><img src="images/NN_2_Node.jpg" alt="" /></center>
+
+														<p>No single hyperplane can accomplish the classification required so we address the deficiency by adding an additional
+															layer making this a multi-layer perceptron model.</p>
+
+												<h4>Synthetic Data</h4>
+
+												 	<p>Returing to the synthetic data, at a minimum we will require multiple hyperplanes for our classification but there are considerations to be made.
+													 First, we must maintain parsimony so we need to ensure the model will generalize well.  Each hyperplane can be represented by a node in the hidden layer
+													 but we don’t want to add so many nodes that our model won’t generalize well or will overfit our training data.  Of course, an ANN isn’t the only classifier
+													 at our disposal and certainly not the best.  Simpler approaches may be able to generalize better with higher-dimensional data.  The value of this exercise
+													 is to demonstrate what not to do and what should be included in the model development as part of the governance required.  Here’s a summary of a few things
+													 to think about when applying model risk governance.</p>
+
+														 <ul>
+														 	<li>The variables required are linearly non-separable and the ANN classification is suitable for such problems.
+															<li>The ANN allows for model training without additional complex variable transformations (other than feature scaling) increasing transparency and reducing input model risk.
+														 	<li>The ANN is a classification module that will contribute to the overall performance of the scorecard.
+														 	<li>The ANN sub-module within the scorecard will, by design, have a more limited influence on the final score compared to the financial module yet provide the
+															 inclusion of valuable metrics not captured in financial statements.
+														</ul>
+
+														<h3>Model Training & Transparency</h3>
+
+														<p>It is surprisingly easy to code an ANN in Tensorflow in a compact and transparent fashion.  Its beneficial at this point to go over just how an ANN is trained.
+															To understand this we return to the basic schematic of a single hidden layer multi-layer perceptron used to illustrate the XOR problem earlier.
+															However, this time we shall use the following architecture as the starting point for the model training and as we evaluate our model in testing,
+															add neurons to the hidden layer until we achieve an adequate performance in both training and testing.</p>
+
+													<center><img src="images/NN_2N.jpg" alt="" /></center>
+
+													 <p>The key to training an ANN is to update the weights that connect the inputs to each perceptron node as well as the bias terms.
+														 At each perceptron node there resides an activation function that will determine the output that will feed into the next layer until you’ve reached the final output layer.
+														 There are many activation functions to choose from but for this simple network the rectified linear unit is chosen for the hidden layer perceptrons and the sigmoid is chosen for the output layer.
+														 Now we solve for the weights and bias terms using forward and backward propagation.</p>
+
+														 <h4>Forward, Backward Propagation and Optimizers</h4>
+														 <p>There is a lot of information on forward and backward propagation in much greater detail than can be provided here but a quick summary of the algorithm is illustrated in the following steps.</p>
+
+													<center><img src="images/ForwBackProp.jpg" alt="" /></center>
+
+													<ol>
+														<li>Perform forward propagation
+															\begin{equation*} a^l = f (w^l a^{(l-1)} + b^l) \end{equation*}
+														<li>Compute the delta term for the output layer
+															\begin{equation*} \delta^l = \frac{1}{m}(y-a^l)f'(a^l) \end{equation*}
+														<li>Compute the partial derivatives of the cost function with respect to all of the parameters that feed into the output layer
+															\begin{equation*}\frac{\partial J(\theta)}{\partial\theta_{ij}^{(l-1)}} =(\delta^l)^T a^{(l-1)}\end{equation*}
+														<li>Go back to the previous layer
+															\begin{equation*}l = l -1 \end{equation*}
+														<li>Compute the error term for the current hidden layer
+															\begin{equation*} \delta^l =\delta^{(l=1)}\Theta^l f'(a^l) \end{equation*}
+														<li>Compute the partial derivatives of the cost function with respect to all of the parameters that feed into the current layer
+															\begin{equation*}\frac{\partial J(\theta)}{\partial\theta_{ij}} =(\delta^{(l+1)})^T a^{(l)}\end{equation*}
+														<li>Repeat steps 4 through 6 until the input layer is reached
+														<li>The weights are updated via gradient descent where the change is represented by
+															\begin{equation*}\theta_i := \theta_i + \Delta \theta_i \end{equation*}
+														<li>The "step" is take along the gradient which is scaled by the learning rate
+														  \begin{equation*}\Delta\theta_i = - \eta \frac{\partial J(\theta)}{\partial\theta_i}\end{equation*}
+													</ol>
+
+													<p>Fortunately for us, none of this has to be coded from scratch and TensorFlow makes easy work of the coding process.  The steps in the algorithm as outlined above should be a part of model documentation.
+														There are a number of optimizers available in TensorFlow but we will use SGD which is gradient descent with the option of a momentum optimizer.</p>
+
+														<h4>Tuning the architecture</h4>
+														<p>What about finding the right number of perceptrons in the hidden layer? We began the training process with a simple two perceptron architecture in the hidden layer to aid in our classification.
+															However, we can add perceptrons in the hidden layer allowing us to gauge improvements in performance during training and testing.  Once the gap in accuracy closes between the training and testing
+															(ensuring we don’t overfit), we’ve largely found the right number of perceptrons for the model, indicative of a model that should generalizes well.
+
+															<div class="box alt">
+
+																<div class="row gtr-50 gtr-uniform">
+																	<div class="col-4"><span class="image fit"><img src="images/Figure 2NN_Train.png" alt="" /></span></div>
+																	<div class="col-4"><span class="image fit"><img src="images/Figure 3NN_Train.png" alt="" /></span></div>
+																	<div class="col-4"><span class="image fit"><img src="images/Figure 4NN_Train.png" alt="" /></span></div>
+																	<!-- Break -->
+																	<div class="col-4"><span class="image fit"><img src="images/Figure 5NN_Train.png" alt="" /></span></div>
+																	<div class="col-4"><span class="image fit"><img src="images/Figure 6NN_Train.png" alt="" /></span></div>
+																	<div class="col-4"><span class="image fit"><img src="images/Figure 7NN_Train.png" alt="" /></span></div>
+
+																</div>
+															</div>
+
+															<p>Code to Train the Model:</p>
+															<pre><code>
+import numpy as np
+import pandas as pd
+from random import random
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.utils import to_categorical
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import tensorflow as tf
+
+# Import dataset and split for training and testing
+
+df = pd.read_csv(r'File path')
+
+data = df[["x1","x2","class"]]
+data1 = data[:999]
+x = np.array(data1[["x1","x2"]])
+y = np.array(data1[["class"]])
+x_train, x_test, y_train, y_test =
+train_test_split(x,y,test_size =0.3)
+
+# Plot history to tune the percenptrons
+
+def plot_history(history):
+"""Plots accuracy/loss for training/validation set as a
+function of the epochs
+		:param history: Training history of model
+		:return:
+		"""
+	fig, axs = plt.subplots(2)
+
+# create accuracy sublpot
+axs[0].plot(history.history["accuracy"], label="train accuracy")
+axs[0].plot(history.history["val_accuracy"], label="test accuracy")
+axs[0].set_ylabel("Accuracy")
+axs[0].legend(loc="lower right")
+axs[0].set_title("6 Hidden Neurons")
+
+# create error sublpot
+axs[1].plot(history.history["loss"], label="train error")
+axs[1].plot(history.history["val_loss"], label="test error")
+axs[1].set_ylabel("Error")
+axs[1].set_xlabel("Epoch")
+axs[1].legend(loc="upper right")
+
+plt.show()
+
+
+if __name__ == "__main__":
+
+	# Save model once trained
+
+	#print("x_test: \n {}".format(x_test))
+	#print("y_test: \n {}".format(y_test))
+
+	# Build model 1: 2 inputs, 6 neurons hidden, 1 output
+	# No regularization
+
+	#model = tf.keras.Sequential([
+	#    tf.keras.layers.Dense(6, input_dim=2, activation="relu"),
+	#    tf.keras.layers.Dropout(0.2),
+	#    tf.keras.layers.Dense(1, activation="sigmoid")
+	#])
+
+
+	# Build model 2: 2 inputs, 6 neurons hidden, 1 output
+	# Introduce pruning and regularization
+
+	model = tf.keras.Sequential([
+	tf.keras.layers.Dense(6, input_dim=2, activation="relu",
+	kernel_regularizer=tf.keras.regularizers.l2(0.001)),
+	tf.keras.layers.Dense(1, activation="sigmoid")
+	])
+
+	# Compile model
+
+	optimizer = tf.keras.optimizers.SGD(learning_rate=0.1)
+	model.compile(optimizer=optimizer, loss="MSE",
+	metrics=['accuracy'])
+
+	# Model Evaluation
+
+	print("\nModel evaluation:")
+
+	model.evaluate(x_test,y_test, verbose=1)
+
+	model.summary()
+
+	# Prep model training history
+
+	history = model.fit(x_train, y_train,
+	validation_data=(x_test, y_test),
+	batch_size=32, epochs=100)
+
+	# Plot accuracy and error as a function of the epochs
+
+	plot_history(history)
+
+	plt.show()
+
+	model.save('/FilePath/TensorflowProject.h5')
+
+	# Final Model Weights
+
+	print("Layer 0 Weights: ",model.layers[0].weights)
+	print("Layer 0 Bias: ",model.layers[0].bias.numpy())
+
+	print("Layer 1 Weights: ", model.layers[1].weights)
+	print("Layer 1 bias: ", model.layers[1].bias.numpy())
+																		</code></pre>
+
+
+																	<p>Its apparent that 5 to 6 perceptrons in the hidden layer provides improvements in performance sufficient to proceed with this architecture and further perceptrons wouldn’t be beneficial,
+																			particularly when we prioritize parsimony.</p>
+
+																	<center><img src="images/Final_NN.jpg" alt="" /></center>
+
+												 					<p>While the model itself is not complicated, it would also be wise to introduce some regularization to see if we can achieve further refinements in the model build, making the network more robust.
+																		In this case we introduce L2 regularization with the hyper-parameter λ equal to 0.001.  Typically more dense networks would necessitate L2 regularization and L1 would be beneficial for contending with outliers but its evident that with L2 we achieve good results.
+																		Regularization penalizes the error function so that the weights are not excessively large.</p>
+
+																		<center><img src="images/Figure Final_Train.png" alt="" /></center>
+
+																		<p>Producing a floorplan of the network is perhaps one of the most valuable components of the model documentation and once we have tuned the network for the optimal number of perceptrons we need to do our best to provide a graphical representation.
+																			As networks increase in complexity with additional inputs, layers and outputs this might be challenging but the weights and biases don’t necessarily need to be incorporated into the floorplan as shown above.
+																			We should strive to provide the basic architecture and all parameters can be documented separately so long as it is included for the sake of transparency.   Once the model is finalized, save the model in whatever required directory for archiving model development,
+																			perserving version control.  Tensorflow will save the entire model build, architecture, weights, etc. for validation.</p>
+
+																		<ul>
+																			<li>Demonstration of careful consideration for the architecture of the ANN is important for regulators so make sure to walk through the decision-making process.
+																			<li>Once the model is trained, relay the architecture of the ANN with the final weights (and bias terms) in as detailed a fashion as possible.
+																		</ul>
+
+																			<p>Final Model Weights and bias output:</p>
+																			<pre><code>
+Layer 0 Weights:
+array([[-1.5806532 ,  0.09122919,  1.6068017 ,  0.6393693 , -1.1868021 ,
+	-0.4054903 ],
+[ 0.02148635,  0.32630092,  0.95337176, -1.4506562 ,  1.2292429 ,
+-1.265296  ]],
+array([-0.23699231, -0.04590984, -0.15664168, -0.19714546, -0.24921502,
+-0.12463059],
+
+Layer 0 Bias:
+[-0.23699231 -0.04590984 -0.15664168 -0.19714546 -0.24921502 -0.12463059]
+
+Layer 1 Weights:
+array([[-1.9463658],
+[-0.2954599],
+[-2.410741 ],
+[-2.0407786],
+[-1.990902 ],
+[-1.6122009]],
+
+Layer 1 bias:  [2.3718722]
+																			</code></pre>
+
+																			<h3>Performance & Metrics</h3>
+
+																			<p>We can now evaluate the final model on the hold out sample (testing data) and utilize the metrics based on whatever standards the department may have.
+																				Most scorecard developments make use of the Receiver Operator Curve [ROC] and/or confusion matrix.<br>
+
+ 																			<center><img src="images/Figure ROC_plot.png" alt="" /></center>
+
+																				In addition, the organization will have specific accuracy ratio thresholds for training and testing, usually an accuracy ratio above 0.50 in both training and testing.
+																				Now that may not sound like a lot but in the world of wholesale credit, where data is limited, you have to work with what you have.
+																				This particular model’s accuracy is not something one is likely to encounter which is largely due to the substantial number of default observations in the data.
+																			</p>
+																			<p>Code to generate ROC curve:</p>
+<pre><code>
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import auc, roc_curve, roc_auc_score,
+from sklearn.preprocessing import label_binarize
+import matplotlib.pyplot as plt
+import tensorflow as tf
+
+# Import dataset and split for testing
+
+df = pd.read_csv(r'FilePath')
+
+data = df[["x1","x2","class"]]
+
+data1 = data[:999]
+
+x = np.array(data1[["x1","x2"]])
+
+y = np.array(data1[["class"]])
+
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size =0.3)
+
+new_model = tf.keras.models.load_model('FilePath/TensorflowProject.h5')
+
+# Compute ROC curve and ROC area for each class
+
+r_probs = [0 for _ in range(len(y_test))]
+nn_probs = new_model.predict(x_test)
+
+r_auc = roc_auc_score(y_test,r_probs)
+nn_auc = roc_auc_score(y_test,nn_probs)
+
+print("Random (chance) Prediction: AUROC = %.3f" % (r_auc))
+print("Neural Network: AUROC = %.3f" % (nn_auc))
+
+r_fpr, r_tpr, _ = roc_curve(y_test, r_probs)
+nn_fpr, nn_tpr, _ = roc_curve(y_test, nn_probs)
+
+plt.plot(r_fpr, r_tpr, linestyle='--', label='Random prediction (AUROC = %0.3f)' % r_auc)
+plt.plot(nn_fpr, nn_tpr, marker='.', label='Neural Network (AUROC = %0.3f)' % nn_auc)
+
+# Title
+plt.title('ROC Plot')
+# Axis labels
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+# Show legend
+plt.legend()
+
+# Show plot
+plt.show()
+																			</code></pre>
+
+																			<h3>Conclusion</h3>
+																			<p>There tends to be a great deal of trepidation towards the use of ANNs for wholesale credit because of the misconception that it is a “black box” which simply is not true.
+																				Of course, we are tackling a rather simple model build here but the reality is that the basics are applicable.  Many organizations often stay clear of the approach for feature
+																				that it might not be clearly explainable to regulators and stakeholders.  However, in this context the ANNs don't have to be convolutional or deep neural nets to be useful.
+																				The ANN is effective at solving a problem frequently encountered in wholesale credit, features that may not exhibit
+																				linear separability and the approach solves this without unnecessary complicated feature transformations that could lead to additional model risk.
+																				In the upcoming project on synthetic data for validation and testing I'll go into Conceptual Soundness in greater detail as it relates to guidance on SR 11-7.</p>
+
+
+
+
+
+
+
+</html>
