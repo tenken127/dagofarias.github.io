@@ -1,0 +1,292 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Project: Fraud Detection with Ensemble Learning</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<a href="index.html" class="logo">Fraud Detection with Ensemble Learning</a>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="index.html">Home</a></li>
+							<li><a href="generic.html">About Me</a></li>
+							<li class="active"><a href="Project4.html">Project</a></li>
+						</ul>
+						<ul class="icons">
+							<li><a href="https://www.linkedin.com/in/dagoberto-farias/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+							<li><a href="https://github.com/tenken127" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<section class="post">
+								<header class="major">
+									<h1>Fraud Detection<br />with Ensemble Learning</h1>
+									<p>Benchmarking LightGBM, XGBoost, CatBoost, and Random Forest on the IEEE-CIS
+										Vesta Corporation e-commerce fraud dataset, culminating in a stacking ensemble.</p>
+								</header>
+
+								<h3>Introduction</h3>
+								<p>Imagine standing at the checkout counter at the grocery store with a long line behind you and the cashier
+									announces that your card has been declined. While perhaps cumbersome in the moment, fraud prevention systems
+									are saving consumers millions of dollars per year. Researchers from the IEEE Computational Intelligence Society
+									(IEEE-CIS), partnering with Vesta Corporation, the world's leading payment service company, have provided
+									real-world e-commerce transaction data to benchmark machine learning models for fraud detection.</p>
+
+								<p>In this project, we tackle the fraud detection challenge using <strong>ensemble learning methods</strong>&mdash;a
+									family of techniques that combine multiple models to produce predictions superior to any individual model.
+									We train four base learners (LightGBM, XGBoost, CatBoost, and Random Forest) and combine them
+									through a stacking ensemble with a logistic regression meta-learner.</p>
+
+								<h3>Dataset Overview</h3>
+								<p>The dataset consists of two tables joined by <code>TransactionID</code>:</p>
+								<ul>
+									<li><strong>Transaction Table</strong>: ~590K rows, 394 columns including the binary target <code>isFraud</code>,
+										transaction amounts, card information, addresses, email domains, time deltas, and 339 anonymized Vesta-engineered
+										features (V1&ndash;V339).</li>
+									<li><strong>Identity Table</strong>: ~144K rows, 41 columns including device type, device info, and
+										identity features (id_01&ndash;id_38). Not all transactions have identity information.</li>
+								</ul>
+								<p>Key challenges include severe class imbalance (~3.5% fraud rate), heavy missing values across
+									many feature columns, and high dimensionality after merging both tables.</p>
+
+								<span class="image fit"><img src="images/class_distribution.png" alt="Class Distribution" /></span>
+
+								<h3>Feature Engineering</h3>
+								<p>Raw features were augmented with domain-informed transformations:</p>
+								<ul>
+									<li><strong>Time features</strong>: Hour of day, day of week, and elapsed days extracted from <code>TransactionDT</code>.</li>
+									<li><strong>Amount features</strong>: Log-transformed amount, decimal component, and a round-amount indicator.</li>
+									<li><strong>Frequency encoding</strong>: Value counts for card identifiers, address codes, and email domains.</li>
+									<li><strong>Card aggregates</strong>: Mean and standard deviation of transaction amounts grouped by card.</li>
+									<li><strong>Email decomposition</strong>: Domain suffix and prefix extracted from P/R email domains.</li>
+									<li><strong>NaN count</strong>: Total missing values per row as a signal of data completeness.</li>
+									<li><strong>Interaction features</strong>: Combined address-card and email-card identifiers.</li>
+								</ul>
+
+								<pre><code>
+def add_time_features(df):
+    df["TransactionDT_days"] = df["TransactionDT"] / 86400
+    df["TransactionDT_hour"] = np.floor(df["TransactionDT"] / 3600) % 24
+    df["TransactionDT_dayofweek"] = np.floor(df["TransactionDT"] / 86400) % 7
+    return df
+
+def add_amount_features(df):
+    df["TransactionAmt_log"] = np.log1p(df["TransactionAmt"])
+    df["TransactionAmt_decimal"] = (
+        (df["TransactionAmt"] - df["TransactionAmt"].astype(int)) * 1000
+    ).astype(int)
+    df["TransactionAmt_is_round"] = (df["TransactionAmt"] % 1 == 0).astype(np.int8)
+    return df
+
+def add_frequency_features(df, cols):
+    for col in cols:
+        vc = df[col].value_counts(dropna=False)
+        df[f"{col}_freq"] = df[col].map(vc).astype(np.float32)
+    return df
+								</code></pre>
+
+								<h3>Preprocessing Pipeline</h3>
+								<p>Preprocessing addressed the major data quality issues:</p>
+								<ol>
+									<li><strong>Column pruning</strong>: Features with greater than 90% null values were dropped to reduce noise.</li>
+									<li><strong>Imputation</strong>: Numeric columns filled with medians; categorical columns filled with mode values, both computed from training data only to prevent leakage.</li>
+									<li><strong>Encoding</strong>: Label encoding applied to all categorical features. CatBoost receives the original categoricals natively.</li>
+									<li><strong>Memory optimization</strong>: Numeric types downcast to the smallest representation (e.g., float64 &rarr; float32, int64 &rarr; int16) to handle the 1.3 GB dataset efficiently.</li>
+								</ol>
+
+								<h3>Model Development</h3>
+								<p>Four gradient-boosted and bagging models were trained, each with 5-fold stratified cross-validation
+									and early stopping. Class imbalance was handled via <code>scale_pos_weight</code> (boosting models)
+									and <code>class_weight='balanced'</code> (Random Forest).</p>
+
+								<h4>LightGBM</h4>
+								<p>Microsoft's LightGBM uses histogram-based splitting and leaf-wise tree growth, making it
+									exceptionally fast on large datasets. It handles categorical features natively when specified.</p>
+								<pre><code>
+params = {
+    "objective": "binary", "metric": "auc",
+    "boosting_type": "gbdt", "n_estimators": 1000,
+    "learning_rate": 0.05, "num_leaves": 256,
+    "min_child_samples": 50, "subsample": 0.7,
+    "colsample_bytree": 0.7, "reg_alpha": 0.1, "reg_lambda": 1.0,
+}
+model = lgb.LGBMClassifier(**params)
+model.fit(X_tr, y_tr,
+    eval_set=[(X_val, y_val)],
+    callbacks=[lgb.early_stopping(50), lgb.log_evaluation(200)])
+								</code></pre>
+
+								<h4>XGBoost</h4>
+								<p>XGBoost pioneered scalable gradient boosting with regularization. We use the histogram-based
+									tree method for speed, with L1 and L2 regularization to control overfitting.</p>
+								<pre><code>
+params = {
+    "objective": "binary:logistic", "eval_metric": "auc",
+    "n_estimators": 1000, "learning_rate": 0.05,
+    "max_depth": 8, "min_child_weight": 50,
+    "subsample": 0.7, "colsample_bytree": 0.7,
+    "reg_alpha": 0.1, "reg_lambda": 1.0, "tree_method": "hist",
+}
+model = xgb.XGBClassifier(**params)
+model.fit(X_tr, y_tr, eval_set=[(X_val, y_val)],
+    verbose=200, early_stopping_rounds=50)
+								</code></pre>
+
+								<h4>CatBoost</h4>
+								<p>Yandex's CatBoost handles categorical features without explicit encoding using ordered
+									target statistics, and employs ordered boosting to reduce prediction shift.</p>
+								<pre><code>
+params = {
+    "iterations": 1000, "learning_rate": 0.05,
+    "depth": 8, "l2_leaf_reg": 3.0,
+    "subsample": 0.7, "eval_metric": "AUC",
+}
+model = CatBoostClassifier(**params)
+model.fit(X_tr, y_tr, eval_set=(X_val, y_val),
+    cat_features=cat_features, early_stopping_rounds=50)
+								</code></pre>
+
+								<h4>Random Forest</h4>
+								<p>As a bagging ensemble, Random Forest provides diversity from the boosted models.
+									Each tree is trained on a bootstrap sample with <code>class_weight='balanced'</code>
+									to automatically adjust for the fraud/non-fraud ratio.</p>
+								<pre><code>
+params = {
+    "n_estimators": 500, "max_depth": 16,
+    "min_samples_leaf": 50, "max_features": "sqrt",
+    "class_weight": "balanced",
+}
+model = RandomForestClassifier(**params)
+model.fit(X_tr, y_tr)
+								</code></pre>
+
+								<h3>Stacking Ensemble</h3>
+								<p>The stacking ensemble combines the out-of-fold (OOF) predictions from all four base models
+									as input features for a logistic regression meta-learner. This two-level architecture learns
+									the optimal weighting of each model's predictions:</p>
+								<ul>
+									<li><strong>Level 1</strong>: Each base model generates OOF predictions via 5-fold CV.</li>
+									<li><strong>Level 2</strong>: A logistic regression meta-learner is trained on the stacked
+										OOF predictions, learning which models to trust more for different prediction ranges.</li>
+								</ul>
+
+								<pre><code>
+# Stack OOF predictions from all base models
+oof_stack = np.column_stack([
+    results[name]["oof"] for name in model_names
+])
+
+# Train meta-learner
+meta = LogisticRegression(C=1.0, solver="lbfgs", max_iter=1000)
+oof_meta = cross_val_predict(
+    meta, oof_stack, y_train, cv=skf, method="predict_proba"
+)[:, 1]
+meta.fit(oof_stack, y_train)
+
+# Generate test predictions
+test_meta = meta.predict_proba(test_stack)[:, 1]
+								</code></pre>
+
+								<p>We also compare against a simple weighted average ensemble where weights are
+									proportional to each model's individual AUC score.</p>
+
+								<h3>Results &amp; Evaluation</h3>
+								<p>Model performance was evaluated using ROC-AUC on out-of-fold predictions, ensuring
+									no data leakage between training and evaluation.</p>
+
+								<span class="image fit"><img src="images/model_comparison.png" alt="Model Comparison" /></span>
+
+								<h4>ROC Curves</h4>
+								<p>The ROC curves below show the trade-off between true positive rate and false positive
+									rate across all models. The stacking ensemble achieves the highest AUC by leveraging
+									the complementary strengths of each base learner.</p>
+								<span class="image fit"><img src="images/roc_curves.png" alt="ROC Curves" /></span>
+
+								<h4>Precision-Recall</h4>
+								<p>Given the severe class imbalance, precision-recall curves provide a more informative
+									view of model performance on the minority (fraud) class.</p>
+								<span class="image fit"><img src="images/precision_recall.png" alt="Precision-Recall Curves" /></span>
+
+								<h4>Confusion Matrices</h4>
+								<p>The confusion matrices illustrate each model's classification performance at the 0.5
+									probability threshold.</p>
+								<span class="image fit"><img src="images/confusion_matrices.png" alt="Confusion Matrices" /></span>
+
+								<h4>Feature Importance</h4>
+								<p>Feature importance analysis reveals which variables most influence fraud predictions.
+									Transaction amount features, Vesta-engineered V-columns, and card frequency encodings
+									consistently rank among the top predictors.</p>
+								<span class="image fit"><img src="images/feature_importance.png" alt="Feature Importance" /></span>
+
+								<h4>SHAP Analysis</h4>
+								<p>SHAP (SHapley Additive exPlanations) values provide model-agnostic feature attribution,
+									showing how each feature pushes the prediction toward fraud or legitimate for individual
+									transactions.</p>
+								<span class="image fit"><img src="images/shap_summary.png" alt="SHAP Summary" /></span>
+
+								<h3>Conclusion</h3>
+								<p>This project demonstrates the effectiveness of ensemble learning for fraud detection on
+									large-scale e-commerce transaction data. Key takeaways:</p>
+								<ul>
+									<li>Gradient-boosted models (LightGBM, XGBoost, CatBoost) outperform bagging (Random Forest)
+										on this imbalanced dataset, with LightGBM and CatBoost showing the strongest individual performance.</li>
+									<li>The stacking ensemble with a logistic regression meta-learner achieves the highest ROC-AUC by
+										learning to optimally combine diverse model predictions.</li>
+									<li>Feature engineering&mdash;particularly frequency encoding, time decomposition, and amount
+										transformations&mdash;provides meaningful signal beyond the raw features.</li>
+									<li>SHAP analysis offers transparent, interpretable explanations for fraud predictions, which is
+										essential for regulatory compliance and operational deployment in banking environments.</li>
+								</ul>
+								<p>The full source code, including the modular Python pipeline and all evaluation scripts,
+									is available on <a href="https://github.com/tenken127">GitHub</a>.</p>
+
+							</section>
+
+					</div>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<section class="split contact">
+							<section>
+								<h3>Email</h3>
+								<p><a href="mailto: dagfarias127@gmail.com">dagfarias127@gmail.com</a></p>
+							</section>
+							<section>
+								<h3>Social</h3>
+								<ul class="icons alt">
+									<li><a href="https://www.linkedin.com/in/dagoberto-farias/" class="icon brands alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
+									<li><a href="https://github.com/tenken127" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+								</ul>
+							</section>
+						</section>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
