@@ -77,6 +77,21 @@
 								<span class="image fit"><img src="images/cre_segment_auc.png" alt="Segment-level AUC chart" /></span>
 								<span class="image fit"><img src="images/cre_psi_top_features.png" alt="PSI drift chart" /></span>
 
+								<h3>Validation Performance Interpretation</h3>
+								<p>The ROC-AUC result indicates weak class separation in this validation run, which is a critical governance signal.
+								From a model risk perspective, this is exactly where human judgment remains essential: a validator should not simply
+								accept automated outputs, but determine whether the observed weakness points to <strong>recalibration</strong> or a
+								more fundamental <strong>model redevelopment</strong> decision.</p>
+
+								<p>A practical escalation approach is to anchor actions to internal model development standards and approved thresholds.
+								For example, if discrimination is marginal but stability and calibration remain within tolerance, a controlled
+								recalibration may be appropriate. If discrimination, calibration, and segment performance all deteriorate together,
+								that combination is typically evidence for redevelopment rather than incremental tuning.</p>
+
+								<p>In other words, agents accelerate testing, evidence collection, and consistency, but <strong>do not replace</strong>
+								the evaluator's responsibility to challenge results, interpret context, and decide the risk disposition of the model
+								before production use.</p>
+
 								<h3>Agentic Workflow</h3>
 								<p>The project decomposes validation into specialized agents:
 								<code>IntakeAgent</code>, <code>DataAgent</code>, <code>WrangleAgent</code>,
