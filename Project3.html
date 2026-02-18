@@ -60,6 +60,7 @@
 								class imbalance, missingness, outliers, and regime shifts. Agent-driven data pipelines
 								then perform schema checks, imputations, encoding, and deterministic train/validation/test
 								time splits before statistical testing begins.</p>
+								<span class="image fit"><img src="images/cre_agent_flow.png" alt="Agent flow in validation framework" /></span>
 
 								<h3>Validation Framework</h3>
 								<ul>
@@ -70,6 +71,9 @@
 									<li><strong>Statistical Significance:</strong> Wald and likelihood-ratio testing</li>
 									<li><strong>Segment Review:</strong> by property type, MSA, and market-cap bucket</li>
 								</ul>
+								<span class="image fit"><img src="images/cre_model_metrics.png" alt="Validation performance metrics" /></span>
+								<span class="image fit"><img src="images/cre_segment_auc.png" alt="Segment-level AUC chart" /></span>
+								<span class="image fit"><img src="images/cre_psi_top_features.png" alt="PSI drift chart" /></span>
 
 								<h3>Agentic Workflow</h3>
 								<p>The project decomposes validation into specialized agents:
@@ -83,6 +87,7 @@
 								agent-assisted validation reduced cycle time, increased controls executed, improved documentation
 								completeness, and raised reproducibility pass rates. This supports scalable validation in high-volume
 								model inventories.</p>
+								<span class="image fit"><img src="images/cre_manual_vs_agent_kpis.png" alt="Manual vs agent-assisted KPI comparison" /></span>
 
 								<h3>Governance Implications</h3>
 								<p>The workflow aligns to SR 11-7 principles: conceptual soundness, ongoing monitoring, and outcomes analysis.
