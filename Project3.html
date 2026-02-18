@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Coming Soon: LLM Forecasting Under SR 11-7 Model Governance</title>
+		<title>Project: Agentic Model Validation for CRE Logistic Regression</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -14,7 +14,7 @@
 
 				<!-- Header -->
 					<header id="header">
-						<a href="index.html" class="logo">LLM Forecasting Under SR 11-7 Model Governance</a>
+						<a href="index.html" class="logo">Agentic Model Validation for CRE Logistic Regression</a>
 					</header>
 
 				<!-- Nav -->
@@ -36,19 +36,65 @@
 						<!-- Post -->
 							<section class="post">
 								<header class="major">
-									<h1>Coming Soon</h1>
-									<p>LLM-Enhanced Time Series Forecasting with<br />
-										Federal Reserve SR 11-7 Model Risk Governance</p>
+									<h1>Agentic Model Validation for<br />CRE Logistic Regression</h1>
+									<p>A full validation lifecycle for a commercial real estate default model,<br />
+									showing how specialized agents improve speed, consistency, and traceability.</p>
 								</header>
 
-								<p style="text-align: center; font-size: 1.1em;">
-									This project explores the intersection of large language models and regulatory
-									compliance by building an SR 11-7 compliant forecasting framework. Using the
-									FNSPID dataset&mdash;29.7 million stock prices and 15.7 million financial news
-									records spanning 24 years&mdash;we benchmark traditional time series models,
-									deep learning architectures, and LLM-enhanced approaches while documenting
-									the full model governance lifecycle required for production deployment in banking.
-								</p>
+								<h3>Business Problem</h3>
+								<p>Commercial real estate (CRE) credit models are expected to meet strict model risk
+								management standards while still delivering timely decisions. Traditional validation
+								cycles can be manual, fragmented, and documentation-heavy. This project demonstrates
+								how an agentic workflow can accelerate validation for a logistic regression default model
+								without sacrificing governance rigor.</p>
+
+								<h3>Model Context</h3>
+								<p>The model is a loan-level logistic regression predicting <code>default_flag</code> using
+								credit, collateral, and market features such as <code>ltv</code>, <code>dscr</code>,
+								<code>debt_yield</code>, <code>occupancy_rate</code>, market vacancy, and regional factors.
+								Validation covers conceptual soundness, data quality, performance testing, stability, and
+								segment-level fairness diagnostics.</p>
+
+								<h3>Data Retrieval and Wrangling</h3>
+								<p>A realistic synthetic CRE dataset was generated to emulate production constraints:
+								class imbalance, missingness, outliers, and regime shifts. Agent-driven data pipelines
+								then perform schema checks, imputations, encoding, and deterministic train/validation/test
+								time splits before statistical testing begins.</p>
+
+								<h3>Validation Framework</h3>
+								<ul>
+									<li><strong>Discrimination:</strong> ROC-AUC, KS, Gini</li>
+									<li><strong>Calibration:</strong> Brier score and grouped calibration checks</li>
+									<li><strong>Classification Quality:</strong> precision, recall, F1, confusion matrix</li>
+									<li><strong>Stability:</strong> PSI and temporal performance consistency</li>
+									<li><strong>Statistical Significance:</strong> Wald and likelihood-ratio testing</li>
+									<li><strong>Segment Review:</strong> by property type, MSA, and market-cap bucket</li>
+								</ul>
+
+								<h3>Agentic Workflow</h3>
+								<p>The project decomposes validation into specialized agents:
+								<code>IntakeAgent</code>, <code>DataAgent</code>, <code>WrangleAgent</code>,
+								<code>StatsTestAgent</code>, <code>DocReviewAgent</code>, <code>EvidencePackAgent</code>,
+								<code>QAControlAgent</code>, and <code>WebsiteNarrativeAgent</code>. Each agent owns specific
+								controls and outputs an auditable artifact.</p>
+
+								<h3>How Agents Speed Up Validation</h3>
+								<p>Manual vs agent-assisted KPI tracking is used to quantify impact. In the benchmark setup,
+								agent-assisted validation reduced cycle time, increased controls executed, improved documentation
+								completeness, and raised reproducibility pass rates. This supports scalable validation in high-volume
+								model inventories.</p>
+
+								<h3>Governance Implications</h3>
+								<p>The workflow aligns to SR 11-7 principles: conceptual soundness, ongoing monitoring, and outcomes analysis.
+								Agents do not replace independent judgment; they systematize evidence collection and free validators
+								to focus on challenge, interpretation, and risk decisions.</p>
+
+								<h3>Key Takeaways</h3>
+								<ul>
+									<li>Agentic validation improves throughput while maintaining control discipline.</li>
+									<li>Logistic regression remains highly useful when paired with robust validation design.</li>
+									<li>Documentation quality and auditability can be engineered as first-class outputs.</li>
+								</ul>
 
 								<ul class="actions special" style="margin-top: 2em;">
 									<li><a href="index.html" class="button large">Back to Home</a></li>
