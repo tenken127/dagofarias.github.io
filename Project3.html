@@ -55,6 +55,75 @@
 								Validation covers conceptual soundness, data quality, performance testing, stability, and
 								segment-level fairness diagnostics.</p>
 
+								<h3>Model Specifications &amp; Parameter Weights</h3>
+								<ul>
+									<li><strong>Model type:</strong> Logistic Regression (binary classification)</li>
+									<li><strong>Target:</strong> <code>default_flag</code></li>
+									<li><strong>Estimation lens:</strong> Coefficients shown in log-odds units, with odds-ratio interpretation for business users</li>
+									<li><strong>Validation note:</strong> Parameter direction and significance are reviewed alongside AUC/KS, not in isolation</li>
+								</ul>
+
+								<div class="table-wrapper">
+									<table>
+										<thead>
+											<tr>
+												<th>Variable</th>
+												<th>Coefficient (Beta)</th>
+												<th>Approx. Odds Ratio</th>
+												<th>p-value</th>
+												<th>Influence on Default Risk</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td><code>watchlist_flag</code></td>
+												<td>+1.335</td>
+												<td>3.80x</td>
+												<td>0.0005</td>
+												<td>Strong positive and statistically significant risk signal.</td>
+											</tr>
+											<tr>
+												<td><code>ltv</code></td>
+												<td>+1.263</td>
+												<td>3.54x</td>
+												<td>0.4000</td>
+												<td>Higher leverage increases predicted risk, though weak significance in this run.</td>
+											</tr>
+											<tr>
+												<td><code>dscr</code></td>
+												<td>-0.380</td>
+												<td>0.68x</td>
+												<td>0.4265</td>
+												<td>Higher debt-service coverage lowers predicted risk directionally.</td>
+											</tr>
+											<tr>
+												<td><code>noi_growth</code></td>
+												<td>-1.561</td>
+												<td>0.21x</td>
+												<td>0.3200</td>
+												<td>Improving NOI growth decreases risk directionally.</td>
+											</tr>
+											<tr>
+												<td><code>market_vacancy</code></td>
+												<td>+2.901</td>
+												<td>18.19x</td>
+												<td>0.3039</td>
+												<td>Higher market vacancy pushes model toward higher default probability.</td>
+											</tr>
+											<tr>
+												<td><code>unemployment_rate</code></td>
+												<td>-14.668</td>
+												<td>~0.00x</td>
+												<td>0.0433</td>
+												<td>Significant coefficient with non-intuitive sign; requires challenge, segmentation review, and potential redevelopment diagnostics.</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+
+								<p>These weights show why parameter review is a human-intensive validation step: beyond statistical significance, validators must test
+								economic plausibility, multicollinearity effects, and segment behavior before deciding whether to recalibrate or redevelop.</p>
+
 								<h3>Data Retrieval and Wrangling</h3>
 								<p>A realistic synthetic CRE dataset was generated to emulate production constraints:
 								class imbalance, missingness, outliers, and regime shifts. Agent-driven data pipelines
