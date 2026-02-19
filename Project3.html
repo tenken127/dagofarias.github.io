@@ -92,6 +92,51 @@
 								the evaluator's responsibility to challenge results, interpret context, and decide the risk disposition of the model
 								before production use.</p>
 
+								<h4>Decision Policy Table</h4>
+								<div class="table-wrapper">
+									<table>
+										<thead>
+											<tr>
+												<th>Validation Signal</th>
+												<th>Indicative Range</th>
+												<th>Action Required</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>Discrimination (AUC / KS)</td>
+												<td>AUC >= 0.70 and KS >= 0.25</td>
+												<td>Maintain model with routine monitoring.</td>
+											</tr>
+											<tr>
+												<td>Discrimination (AUC / KS)</td>
+												<td>0.60 <= AUC < 0.70 or 0.15 <= KS < 0.25</td>
+												<td>Targeted recalibration and tighter performance monitoring window.</td>
+											</tr>
+											<tr>
+												<td>Discrimination (AUC / KS)</td>
+												<td>AUC < 0.60 or KS < 0.15</td>
+												<td>Escalate for redevelopment review and usage restrictions.</td>
+											</tr>
+											<tr>
+												<td>Stability (PSI)</td>
+												<td>PSI < 0.10</td>
+												<td>No drift action required beyond standard controls.</td>
+											</tr>
+											<tr>
+												<td>Stability (PSI)</td>
+												<td>0.10 <= PSI < 0.25</td>
+												<td>Yellow flag: investigate drift sources and consider recalibration.</td>
+											</tr>
+											<tr>
+												<td>Stability (PSI)</td>
+												<td>PSI >= 0.25</td>
+												<td>Red flag: immediate review, possible model redevelopment trigger.</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+
 								<h3>Agentic Workflow</h3>
 								<p>The project decomposes validation into specialized agents:
 								<code>IntakeAgent</code>, <code>DataAgent</code>, <code>WrangleAgent</code>,
