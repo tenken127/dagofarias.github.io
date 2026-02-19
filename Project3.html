@@ -42,11 +42,14 @@
 								</header>
 
 								<h3>Business Problem</h3>
-								<p>Commercial real estate (CRE) credit models are expected to meet strict model risk
-								management standards while still delivering timely decisions. Traditional validation
-								cycles can be manual, fragmented, and documentation-heavy. This project demonstrates
-								how an agentic workflow can accelerate validation for a logistic regression default model
-								without sacrificing governance rigor.</p>
+								<p>Traditional validation cycles can be manual, fragmented, and documentation-heavy.  This project
+								demonstrates how an Agentic workflow can accelerate validation for a Logistic Regression PD model 
+								without sacrificing governance rigor.  In a smaller organization with fewer resources and data 
+								scientists to cover the portfolio, this becomes a substantial pain point.  The advent of AI agents 
+								allows many of these procedures to be automated, requiring less time devoted to the tedious elements 
+								of the validation, while increasing the quality of model validations overall.  We are exploring here 
+								how to structure a model validation using agents to orchestrate the testing of a commercial (CRE) credit PD 
+								model using synthetic data.</p>
 
 								<h3>Model Context</h3>
 								<p>The model is a loan-level logistic regression predicting <code>default_flag</code> using
@@ -226,9 +229,13 @@
 								to focus on challenge, interpretation, and risk decisions.</p>
 
 								<h3>Key Takeaways</h3>
+								<p></p>Data scientists must still be involved in each step of the process but agents are better utilized in the orchestration 
+								of each of those stages, including the usage of existing code, whether Python or R used in statistical testing.	Depending upon LLMs 
+								to produce statistical test results can often be fraught with errors.  However, using agents as orchestrators to pull, prep, and 
+								invoke data as well as existing test scripts improves the process overall.</p>		
 								<ul>
 									<li>Agentic validation improves throughput while maintaining control discipline.</li>
-									<li>Logistic regression remains highly useful when paired with robust validation design.</li>
+									<li> Limited resources can more efficiently be utilized in smaller organizations.</li>
 									<li>Documentation quality and auditability can be engineered as first-class outputs.</li>
 								</ul>
 
